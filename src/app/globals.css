@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #e8ebe6;
+  --color-ink: #0e0f0c;
+  --color-body: #454745;
+  --color-mute: #868685;
+  --color-border: #e2e8e0;
+  --color-accent: #16a34a;
+  --color-accent-hover: #15803d;
+  --color-footer: #1a1c18;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-canvas-soft);
+  color: var(--color-ink);
+  font-family: "Pretendard Variable", "Pretendard", -apple-system,
+    BlinkMacSystemFont, "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
