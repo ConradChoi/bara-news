@@ -30,15 +30,24 @@ export async function POST(req: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, source }),
+      redirect: "follow",
     });
 
-    const data = await res.json();
+    // JSON 파싱 실패에 대비해 text로 먼저 읽음
+    const text = await res.text();
+    let data: { ok?: boolean; error?: string; status?: number };
+    try {
+      data = JSON.parse(text);
+    } catch {
+      console.error("[subscribe] Apps Script 비JSON 응답:", text.slice(0, 300));
+      return NextResponse.json(
+        { error: "구독 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." },
+        { status: 502 }
+      );
+    }
 
     if (data.status === 409) {
-      return NextResponse.json(
-        { error: data.error },
-        { status: 409 }
-      );
+      return NextResponse.json({ error: data.error }, { status: 409 });
     }
 
     if (!data.ok) {
