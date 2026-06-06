@@ -14,13 +14,20 @@ export default function ComingSoonPage() {
 
     setStatus("loading");
     try {
-      const res = await fetch("/api/subscribe", {
+      const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL!;
+      // text/plain → CORS pre-flight 없이 단순 요청으로 처리됨
+      const res = await fetch(scriptUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain" },
         body: JSON.stringify({ email, source: "coming-soon" }),
       });
-      const data = await res.json();
-      if (res.ok) {
+      const text = await res.text();
+      const data = JSON.parse(text);
+
+      if (data.status === 409) {
+        setStatus("error");
+        setMessage(data.error ?? "이미 구독 신청된 이메일입니다.");
+      } else if (data.ok) {
         setStatus("success");
         setMessage("구독 신청이 완료되었습니다. 론칭 소식을 가장 먼저 보내드릴게요!");
         setEmail("");
