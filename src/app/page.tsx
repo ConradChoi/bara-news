@@ -1,7 +1,13 @@
 import ComingSoon from "./coming-soon";
 import HomePage from "./home-page";
+import { getArticles } from "@/lib/cms";
 
-export default function RootPage() {
+export const revalidate = 60;
+
+export default async function RootPage() {
   const isComingSoon = process.env.NEXT_PUBLIC_COMING_SOON === "true";
-  return isComingSoon ? <ComingSoon /> : <HomePage />;
+  if (isComingSoon) return <ComingSoon />;
+
+  const articles = await getArticles();
+  return <HomePage articles={articles} />;
 }

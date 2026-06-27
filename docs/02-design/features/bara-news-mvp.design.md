@@ -1,6 +1,6 @@
 # bara-news-mvp Design Document
 
-> **Summary**: Google Drive CMS 기반 교육·문화예술 온라인 신문, 구독 신청 폼으로 독자 DB 확보
+> **Summary**: Google Drive CMS 기반 IT·교육·문화예술·종교·상생 온라인 신문, 구독 신청 폼으로 독자 DB 확보
 >
 > **Project**: 바라뉴스 (Bara News)
 > **Version**: 1.0.0
@@ -17,8 +17,8 @@
 
 | Key | Value |
 |-----|-------|
-| **WHY** | 교육·문화예술 분야 신뢰할 수 있는 전문 미디어 부재 → 바라뉴스로 양질의 콘텐츠 제공 |
-| **WHO** | 교육·문화예술 종사자 / 일반 시민 / 관련 기관·단체 |
+| **WHY** | IT·교육·문화예술·종교·상생 분야 신뢰할 수 있는 전문 미디어 부재 → 바라뉴스로 양질의 콘텐츠 제공 |
+| **WHO** | IT·교육·문화예술·종교·상생 종사자 / 일반 시민 / 관련 기관·단체 |
 | **RISK** | Google Drive API 의존 (API 장애 시 콘텐츠 미표시), 구독 폼 스팸 가능성 |
 | **SUCCESS** | 이메일 구독자 DB 확보 (Google Sheets 저장) |
 | **SCOPE** | 콘텐츠 코어 + Google Drive CMS + 구독 폼 / 제외: SNS·검색·뉴스레터 자동발송·관리자 |
@@ -142,7 +142,7 @@ Browser: SubscribeForm 이메일 입력
 
 ```typescript
 // src/types/article.ts
-export type Category = '교육' | '문화예술'
+export type Category = 'IT' | '교육' | '문화예술' | '종교' | '상생'
 
 export interface Article {
   slug: string
@@ -187,7 +187,7 @@ export interface SubscribeResponse {
 |------|------|------|------|
 | slug | string | ✅ | URL 경로 (`education-reform-2026`) |
 | title | string | ✅ | 기사 제목 |
-| category | `교육\|문화예술` | ✅ | 카테고리 |
+| category | `IT\|교육\|문화예술\|종교\|상생` | ✅ | 카테고리 |
 | author | string | ✅ | 기자명 |
 | publishedAt | YYYY-MM-DD | ✅ | 발행일 |
 | published | TRUE/FALSE | ✅ | 발행 여부 |
@@ -275,8 +275,11 @@ getArticlesByCategory(category: Category): Promise<ArticleListItem[]>
 --mute: #868685;             /* 날짜, 캡션, 메타 */
 
 /* 카테고리 컬러 (임시, 디자이너 확정 전) */
+--it: #06b6d4;               /* IT — 시안 */
 --education: #3b82f6;        /* 교육 — 파란색 */
 --culture: #8b5cf6;          /* 문화예술 — 보라색 */
+--religion: #f59e0b;         /* 종교 — 앰버 */
+--sangsaeng: #10b981;        /* 상생 — 에메랄드 */
 ```
 
 ### 5.2 화면 레이아웃
@@ -286,10 +289,10 @@ getArticlesByCategory(category: Category): Promise<ArticleListItem[]>
 ```
 ┌─────────────────────────────────────────────┐
 │  Header                                     │
-│  [바라뉴스 로고]  [홈] [교육] [문화예술]        │
+│  [바라뉴스 로고]  [홈] [IT] [교육] [문화예술] [종교] [상생] │
 ├─────────────────────────────────────────────┤
 │  CategoryFilter                             │
-│  [전체] [교육] [문화예술]                      │
+│  [전체] [IT] [교육] [문화예술] [종교] [상생]      │
 ├─────────────────────────────────────────────┤
 │  ArticleGrid (3열)                          │
 │  ┌──────┐ ┌──────┐ ┌──────┐               │
@@ -350,12 +353,12 @@ getArticlesByCategory(category: Category): Promise<ArticleListItem[]>
 #### 홈 페이지 (/)
 
 - [ ] Header: 바라뉴스 로고 텍스트 또는 이미지
-- [ ] Header: 네비게이션 링크 — 홈(/), 교육(/category/교육), 문화예술(/category/문화예술)
-- [ ] CategoryFilter: 탭 버튼 3개 — 전체, 교육, 문화예술
+- [ ] Header: 네비게이션 링크 — 홈(/), IT(/category/IT), 교육(/category/교육), 문화예술(/category/문화예술), 종교(/category/종교), 상생(/category/상생)
+- [ ] CategoryFilter: 탭 버튼 6개 — 전체, IT, 교육, 문화예술, 종교, 상생
 - [ ] CategoryFilter: 선택된 탭 활성화 스타일 (underline 또는 배경색 변경)
 - [ ] ArticleGrid: 기사 카드 반복 렌더링 (published=TRUE인 기사만)
 - [ ] ArticleCard: 썸네일 이미지 (`<img>` 또는 `<Image>`)
-- [ ] ArticleCard: 카테고리 뱃지 (교육=파랑, 문화예술=보라)
+- [ ] ArticleCard: 카테고리 뱃지 (IT=시안, 교육=파랑, 문화예술=보라, 종교=앰버, 상생=에메랄드)
 - [ ] ArticleCard: 기사 제목 (클릭 시 /articles/[slug] 이동)
 - [ ] ArticleCard: 기사 요약 (2~3줄 truncate)
 - [ ] ArticleCard: 날짜 표시 (YYYY-MM-DD 형식)
@@ -369,7 +372,7 @@ getArticlesByCategory(category: Category): Promise<ArticleListItem[]>
 #### 기사 상세 (/articles/[slug])
 
 - [ ] Header: 공통 헤더
-- [ ] 카테고리 뱃지 (교육/문화예술)
+- [ ] 카테고리 뱃지 (IT/교육/문화예술/종교/상생)
 - [ ] 기사 제목 (h1, Pretendard weight 900)
 - [ ] 기자명 + 발행일 표시
 - [ ] 대표 이미지 (thumbnail URL 사용)
@@ -379,7 +382,7 @@ getArticlesByCategory(category: Category): Promise<ArticleListItem[]>
 
 #### 카테고리 목록 (/category/[name])
 
-- [ ] 카테고리 제목 표시 ("교육 기사" / "문화예술 기사")
+- [ ] 카테고리 제목 표시 ("IT 기사" / "교육 기사" / "문화예술 기사" / "종교 기사" / "상생 기사")
 - [ ] 해당 카테고리 기사 카드 그리드
 - [ ] 빈 상태 UI (해당 카테고리 기사 없을 때)
 - [ ] Footer: 공통 푸터
@@ -458,14 +461,17 @@ interface ApiError {
 |---|----------|------|----------|
 | 1 | 기사 탐색 + 읽기 | 홈 → 교육 탭 → 기사 카드 클릭 → 상세 본문 확인 | 본문 HTML 렌더링, 에러 없음 |
 | 2 | 구독 신청 성공 | 홈 → 이메일 입력 → 구독 신청 → 성공 메시지 | UI 피드백 표시 |
-| 3 | 카테고리 탐색 | 헤더 "문화예술" 클릭 → /category/문화예술 → 기사 목록 확인 | 문화예술 기사만 표시 |
+| 3 | 카테고리 탐색 | 헤더 "문화예술" 클릭 → /category/문화예술 → 기사 목록 확인 | 해당 카테고리 기사만 표시 |
 
 ### 8.5 Seed Data Requirements
 
 | 엔티티 | 최소 수 | 필수 필드 |
 |--------|:------:|----------|
-| Article (교육) | 3 | slug, title, category=교육, thumbnail, summary |
-| Article (문화예술) | 3 | slug, title, category=문화예술, thumbnail, summary |
+| Article (IT) | 2 | slug, title, category=IT, thumbnail, summary |
+| Article (교육) | 2 | slug, title, category=교육, thumbnail, summary |
+| Article (문화예술) | 2 | slug, title, category=문화예술, thumbnail, summary |
+| Article (종교) | 2 | slug, title, category=종교, thumbnail, summary |
+| Article (상생) | 2 | slug, title, category=상생, thumbnail, summary |
 | Article (본문) | 1 | docId (실제 Google Docs ID, 본문 있음) |
 
 > 테스트 전 Google Sheets에 위 데이터를 수동으로 입력하거나, Mock 데이터로 lib/cms.ts를 교체하여 테스트
